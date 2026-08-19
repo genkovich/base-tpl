@@ -45,7 +45,7 @@ func sniffContentType(file io.Reader, declared string) (body io.Reader, ok bool)
 	detected := http.DetectContentType(head)
 	if detected != declared {
 		// http.DetectContentType returns "image/jpeg" for jpg; map our alias.
-		if !(declared == "image/jpg" && detected == "image/jpeg") {
+		if declared != "image/jpg" || detected != "image/jpeg" {
 			return nil, false
 		}
 	}

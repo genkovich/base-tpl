@@ -1,6 +1,7 @@
 package infra
 
 import (
+	"errors"
 	"testing"
 	"time"
 
@@ -89,7 +90,7 @@ func TestAuthCodeStore_InvalidCodeReturnsError(t *testing.T) {
 	if err == nil {
 		t.Fatal("expected error for invalid code, got nil")
 	}
-	if err != ErrCodeInvalid {
+	if !errors.Is(err, ErrCodeInvalid) {
 		t.Fatalf("expected ErrCodeInvalid, got %v", err)
 	}
 }
@@ -113,7 +114,7 @@ func TestAuthCodeStore_ExpiredCodeReturnsError(t *testing.T) {
 	if err == nil {
 		t.Fatal("expected error for expired code, got nil")
 	}
-	if err != ErrCodeInvalid {
+	if !errors.Is(err, ErrCodeInvalid) {
 		t.Fatalf("expected ErrCodeInvalid, got %v", err)
 	}
 

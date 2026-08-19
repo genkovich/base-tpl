@@ -67,7 +67,7 @@ func TestS3Storage_Head_ExistingObject_ReturnsSizeAndExists(t *testing.T) {
 	const wantSize = 4096
 
 	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		require.Equal(t, http.MethodHead, r.Method)
+		assert.Equal(t, http.MethodHead, r.Method)
 		w.Header().Set("Content-Length", strconv.Itoa(wantSize))
 		w.WriteHeader(http.StatusOK)
 	})
@@ -83,7 +83,7 @@ func TestS3Storage_Head_ExistingObject_ReturnsSizeAndExists(t *testing.T) {
 
 func TestS3Storage_Head_MissingObject_ReturnsNotExists(t *testing.T) {
 	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		require.Equal(t, http.MethodHead, r.Method)
+		assert.Equal(t, http.MethodHead, r.Method)
 		w.WriteHeader(http.StatusNotFound)
 	})
 

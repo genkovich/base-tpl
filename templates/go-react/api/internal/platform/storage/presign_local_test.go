@@ -32,7 +32,7 @@ func TestLocalStorage_PresignPut_ReturnsURLWithKeyAndToken(t *testing.T) {
 
 	require.NoError(t, err)
 	assert.NotEmpty(t, got, "PresignPut must return a non-empty URL")
-	assert.True(t, strings.Contains(got, key), "presigned URL must reference the object key, got %q", got)
+	assert.Contains(t, got, key, "presigned URL must reference the object key, got %q", got)
 	_ = tokenFromURL(t, got)
 }
 
@@ -45,7 +45,7 @@ func TestLocalStorage_PresignGet_ReturnsURLWithKeyAndToken(t *testing.T) {
 
 	require.NoError(t, err)
 	assert.NotEmpty(t, got, "PresignGet must return a non-empty URL")
-	assert.True(t, strings.Contains(got, key), "presigned URL must reference the object key, got %q", got)
+	assert.Contains(t, got, key, "presigned URL must reference the object key, got %q", got)
 	_ = tokenFromURL(t, got)
 }
 

@@ -116,7 +116,7 @@ func TestLocalStorage_Put_RejectsPathTraversal(t *testing.T) {
 		Size:        4,
 	})
 
-	assert.Error(t, err, "path traversal key must be rejected")
+	require.Error(t, err, "path traversal key must be rejected")
 	assert.Contains(t, err.Error(), "invalid key")
 }
 
@@ -131,6 +131,6 @@ func TestLocalStorage_Put_RejectsAbsoluteKey(t *testing.T) {
 		Size:        4,
 	})
 
-	assert.Error(t, err, "absolute key must be rejected")
+	require.Error(t, err, "absolute key must be rejected")
 	assert.Contains(t, err.Error(), "invalid key")
 }

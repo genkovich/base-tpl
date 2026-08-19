@@ -72,19 +72,19 @@ func (p *GoogleOAuthProvider) ExchangeCode(ctx context.Context, code string) (*d
 
 	req, err := http.NewRequestWithContext(ctx, http.MethodPost, p.cfg.TokenURL, strings.NewReader(data.Encode()))
 	if err != nil {
-		return nil, fmt.Errorf("%w: %v", domain.ErrGoogleAPIFailed, err)
+		return nil, fmt.Errorf("%w: %w", domain.ErrGoogleAPIFailed, err)
 	}
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 
 	resp, err := p.client.Do(req)
 	if err != nil {
-		return nil, fmt.Errorf("%w: %v", domain.ErrGoogleAPIFailed, err)
+		return nil, fmt.Errorf("%w: %w", domain.ErrGoogleAPIFailed, err)
 	}
 	defer resp.Body.Close()
 
 	body, err := io.ReadAll(io.LimitReader(resp.Body, 1<<20))
 	if err != nil {
-		return nil, fmt.Errorf("%w: %v", domain.ErrGoogleAPIFailed, err)
+		return nil, fmt.Errorf("%w: %w", domain.ErrGoogleAPIFailed, err)
 	}
 
 	if resp.StatusCode != http.StatusOK {
@@ -97,7 +97,7 @@ func (p *GoogleOAuthProvider) ExchangeCode(ctx context.Context, code string) (*d
 		ExpiresIn    int    `json:"expires_in"`
 	}
 	if err := json.Unmarshal(body, &tokenResp); err != nil {
-		return nil, fmt.Errorf("%w: %v", domain.ErrGoogleAPIFailed, err)
+		return nil, fmt.Errorf("%w: %w", domain.ErrGoogleAPIFailed, err)
 	}
 
 	if tokenResp.AccessToken == "" {
@@ -117,13 +117,13 @@ func (p *GoogleOAuthProvider) GetUserInfo(ctx context.Context, accessToken strin
 
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, p.cfg.UserInfoURL, nil)
 	if err != nil {
-		return nil, fmt.Errorf("%w: %v", domain.ErrGoogleAPIFailed, err)
+		return nil, fmt.Errorf("%w: %w", domain.ErrGoogleAPIFailed, err)
 	}
 	req.Header.Set("Authorization", "Bearer "+accessToken)
 
 	resp, err := p.client.Do(req)
 	if err != nil {
-		return nil, fmt.Errorf("%w: %v", domain.ErrGoogleAPIFailed, err)
+		return nil, fmt.Errorf("%w: %w", domain.ErrGoogleAPIFailed, err)
 	}
 	defer resp.Body.Close()
 
@@ -141,7 +141,7 @@ func (p *GoogleOAuthProvider) GetUserInfo(ctx context.Context, accessToken strin
 		EmailVerified bool   `json:"email_verified"`
 	}
 	if err := json.NewDecoder(resp.Body).Decode(&info); err != nil {
-		return nil, fmt.Errorf("%w: %v", domain.ErrGoogleAPIFailed, err)
+		return nil, fmt.Errorf("%w: %w", domain.ErrGoogleAPIFailed, err)
 	}
 
 	return &domain.GoogleUserInfo{

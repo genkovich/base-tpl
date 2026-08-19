@@ -1,11 +1,13 @@
 package database
 
 import (
+	"errors"
 	"fmt"
 	"io/fs"
 	"strings"
 
 	"github.com/golang-migrate/migrate/v4"
+	// Blank import registers the pgx/v5 database driver with golang-migrate.
 	_ "github.com/golang-migrate/migrate/v4/database/pgx/v5"
 	"github.com/golang-migrate/migrate/v4/source/iofs"
 )
@@ -25,7 +27,7 @@ func RunMigrations(fsys fs.FS, dsn string) error {
 	}
 	defer m.Close()
 
-	if err := m.Up(); err != nil && err != migrate.ErrNoChange {
+	if err := m.Up(); err != nil && !errors.Is(err, migrate.ErrNoChange) {
 		return fmt.Errorf("migrations up: %w", err)
 	}
 

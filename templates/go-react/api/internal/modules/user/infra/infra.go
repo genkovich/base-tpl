@@ -28,7 +28,6 @@ func (r *PostgresUserRepository) Create(ctx context.Context, user *domain.User) 
 		user.ID, user.Email, user.FirstName, user.LastName, user.AvatarURL, user.GoogleID, user.Role,
 		user.Position, user.Department, user.Bio, user.Timezone,
 	).Scan(&user.CreatedAt, &user.UpdatedAt)
-
 	if err != nil {
 		if database.IsPgUniqueViolation(err) {
 			return domain.ErrEmailAlreadyExists
@@ -45,7 +44,6 @@ func (r *PostgresUserRepository) GetByID(ctx context.Context, id uuid.UUID) (*do
 		 FROM users WHERE id = $1`, id,
 	).Scan(&u.ID, &u.Email, &u.FirstName, &u.LastName, &u.AvatarURL, &u.GoogleID, &u.Role,
 		&u.Position, &u.Department, &u.Bio, &u.Timezone, &u.CreatedAt, &u.UpdatedAt)
-
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
 			return nil, domain.ErrNotFound
@@ -62,7 +60,6 @@ func (r *PostgresUserRepository) GetByEmail(ctx context.Context, email string) (
 		 FROM users WHERE email = $1`, email,
 	).Scan(&u.ID, &u.Email, &u.FirstName, &u.LastName, &u.AvatarURL, &u.GoogleID, &u.Role,
 		&u.Position, &u.Department, &u.Bio, &u.Timezone, &u.CreatedAt, &u.UpdatedAt)
-
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
 			return nil, domain.ErrNotFound
@@ -155,7 +152,6 @@ func (r *PostgresUserRepository) Update(ctx context.Context, user *domain.User) 
 		user.Email, user.FirstName, user.LastName, user.AvatarURL, user.GoogleID, user.Role,
 		user.Position, user.Department, user.Bio, user.Timezone, user.ID,
 	).Scan(&user.CreatedAt, &user.UpdatedAt)
-
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
 			return domain.ErrNotFound

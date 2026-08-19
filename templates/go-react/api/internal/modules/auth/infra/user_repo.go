@@ -28,7 +28,6 @@ func (r *PostgresUserRepository) GetByGoogleID(ctx context.Context, googleID str
 	).Scan(&u.ID, &u.Email, &u.FirstName, &u.LastName, &u.AvatarURL, &u.GoogleID, &u.Role,
 		&u.Position, &u.Department, &u.Bio, &u.Timezone,
 		&u.GoogleAccessToken, &u.GoogleRefreshToken, &u.GoogleTokenExpiry)
-
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
 			return nil, nil
@@ -46,7 +45,6 @@ func (r *PostgresUserRepository) GetByEmail(ctx context.Context, email string) (
 	).Scan(&u.ID, &u.Email, &u.FirstName, &u.LastName, &u.AvatarURL, &u.GoogleID, &u.Role,
 		&u.Position, &u.Department, &u.Bio, &u.Timezone,
 		&u.GoogleAccessToken, &u.GoogleRefreshToken, &u.GoogleTokenExpiry)
-
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
 			return nil, nil
@@ -103,7 +101,6 @@ func (r *PostgresUserRepository) GetByID(ctx context.Context, id uuid.UUID) (*do
 	).Scan(&u.ID, &u.Email, &u.FirstName, &u.LastName, &u.AvatarURL, &u.GoogleID, &u.Role,
 		&u.Position, &u.Department, &u.Bio, &u.Timezone,
 		&u.GoogleAccessToken, &u.GoogleRefreshToken, &u.GoogleTokenExpiry)
-
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
 			return nil, domain.ErrUserNotFound

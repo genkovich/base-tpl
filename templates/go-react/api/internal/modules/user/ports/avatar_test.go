@@ -76,8 +76,7 @@ func (f *fakeStorage) Head(_ context.Context, _ string) (int64, bool, error) {
 // ---------------------------------------------------------------------------
 
 type fakeUserRepo struct {
-	users          map[uuid.UUID]*domain.User
-	updateAvatarFn func(ctx context.Context, id uuid.UUID, avatarURL *string) (*domain.User, error)
+	users map[uuid.UUID]*domain.User
 }
 
 func newFakeUserRepo() *fakeUserRepo {

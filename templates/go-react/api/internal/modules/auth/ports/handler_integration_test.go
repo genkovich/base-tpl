@@ -160,7 +160,7 @@ func startOAuthFlow(t *testing.T, tsURL string) (*http.Cookie, string) {
 
 // doCallback performs the OAuth callback with proper state cookie.
 // Returns the HTTP response (redirect not followed).
-func doCallback(t *testing.T, tsURL string, code string) *http.Response {
+func doCallback(t *testing.T, tsURL, code string) *http.Response {
 	t.Helper()
 
 	stateCookie, state := startOAuthFlow(t, tsURL)
@@ -619,7 +619,7 @@ func exchangeCode(t *testing.T, tsURL, code string) tokenResp {
 }
 
 // doCallbackAndExchange performs the full OAuth callback + code exchange flow.
-func doCallbackAndExchange(t *testing.T, tsURL string, googleCode string) tokenResp {
+func doCallbackAndExchange(t *testing.T, tsURL, googleCode string) tokenResp {
 	t.Helper()
 	resp := doCallback(t, tsURL, googleCode)
 	resp.Body.Close()

@@ -100,14 +100,14 @@ func putJSON(ts *httptest.Server, path string, body any) *http.Response {
 	return resp
 }
 
-func getAuth(ts *httptest.Server, path string, token string) *http.Response {
+func getAuth(ts *httptest.Server, path, token string) *http.Response {
 	req, _ := http.NewRequest(http.MethodGet, ts.URL+path, nil)
 	req.Header.Set("Authorization", "Bearer "+token)
 	resp, _ := http.DefaultClient.Do(req)
 	return resp
 }
 
-func deleteAuth(ts *httptest.Server, path string, token string) *http.Response {
+func deleteAuth(ts *httptest.Server, path, token string) *http.Response {
 	req, _ := http.NewRequest(http.MethodDelete, ts.URL+path, nil)
 	req.Header.Set("Authorization", "Bearer "+token)
 	resp, _ := http.DefaultClient.Do(req)
