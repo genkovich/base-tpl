@@ -1,0 +1,28 @@
+# myapp.<domain> — основний застосунок; grafana.<domain> — метрики (P10).
+# DOMAIN і GRAFANA_DOMAIN приходять з .env на VPS (compose env_file).
+
+{$DOMAIN} {
+	encode zstd gzip
+
+	handle /api/* {
+		reverse_proxy api:8080
+	}
+	# Health-и наживо з домену — фінальний гейт деплою (G8: /readyz 200).
+	handle /livez {
+		reverse_proxy api:8080
+	}
+	handle /readyz {
+		reverse_proxy api:8080
+	}
+	# Локальне файлове сховище (аватари) віддає API.
+	handle /files/* {
+		reverse_proxy api:8080
+	}
+	handle {
+		reverse_proxy web:80
+	}
+}
+
+{$GRAFANA_DOMAIN} {
+	reverse_proxy grafana:3000
+}

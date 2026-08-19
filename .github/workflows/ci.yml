@@ -1,0 +1,28 @@
+# Інваріант base-tpl: темплейт go-react сам по собі зелений.
+name: template-ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  go-react-check:
+    runs-on: ubuntu-latest
+    defaults: { run: { working-directory: templates/go-react } }
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-go@v6
+        with:
+          go-version: "1.25"
+          cache-dependency-path: templates/go-react/api/go.sum
+      - uses: actions/setup-node@v5
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: templates/go-react/web/package-lock.json
+      - name: make check
+        run: make check
