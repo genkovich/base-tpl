@@ -57,7 +57,7 @@ func setupServer(t *testing.T) (*httptest.Server, string) {
 	ts := httptest.NewServer(s.Handler())
 	t.Cleanup(ts.Close)
 
-	adminToken := generateJWT(t, seedAdminID, "genkovich.beerphp@gmail.com", "admin")
+	adminToken := generateJWT(t, seedAdminID, "admin@example.com", "admin")
 
 	return ts, adminToken
 }
@@ -383,7 +383,7 @@ func TestSeedAdminExists(t *testing.T) {
 
 	found := false
 	for _, u := range list.Users {
-		if u.Email == "genkovich.beerphp@gmail.com" && u.Role == "admin" {
+		if u.Email == "admin@example.com" && u.Role == "admin" {
 			found = true
 			break
 		}

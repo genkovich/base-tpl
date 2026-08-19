@@ -1,6 +1,5 @@
-# MyApp — локальний повний стек (proof-of-life на воркшопі, хв 8–15).
-# Дев-цикл іде повз compose (make -C api run + npm run dev у web/) — цей стек
-# показує, що темплейт живий цілком: БД, міграції, API, статика, метрики, Grafana.
+# MyApp — локальний повний стек. Дев-цикл іде повз compose
+# (make -C api run + npm run dev) — цей стек показує, що проєкт живий цілком.
 services:
   postgres:
     image: postgres:18-alpine
@@ -37,6 +36,7 @@ services:
         condition: service_completed_successfully
     restart: unless-stopped
 
+  # battery:web
   web:
     build:
       context: ./web
@@ -47,7 +47,9 @@ services:
     depends_on:
       - api
     restart: unless-stopped
+  # /battery:web
 
+  # battery:observability
   prometheus:
     image: prom/prometheus:v3.5.0
     volumes:
@@ -71,7 +73,10 @@ services:
     depends_on:
       - prometheus
     restart: unless-stopped
+  # /battery:observability
 
 volumes:
   pgdata:
+  # battery:observability
   grafana-data:
+  # /battery:observability

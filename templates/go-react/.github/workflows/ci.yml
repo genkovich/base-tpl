@@ -12,7 +12,9 @@ permissions:
 
 env:
   GO_VERSION: "1.25"
+  # battery:web
   NODE_VERSION: "22"
+  # /battery:web
 
 jobs:
   api-vet:
@@ -90,6 +92,7 @@ jobs:
         with:
           work-dir: api
 
+  # battery:web
   web-check:
     name: Web · Typecheck + tests + build
     runs-on: ubuntu-latest
@@ -109,3 +112,4 @@ jobs:
         run: npm test
       - name: Build
         run: npm run build
+  # /battery:web

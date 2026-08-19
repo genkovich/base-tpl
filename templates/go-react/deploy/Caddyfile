@@ -1,5 +1,7 @@
-# myapp.<domain> — основний застосунок; grafana.<domain> — метрики (P10).
-# DOMAIN і GRAFANA_DOMAIN приходять з .env на VPS (compose env_file).
+# {$DOMAIN} — основний застосунок; домени приходять з .env на VPS.
+# battery:observability
+# {$GRAFANA_DOMAIN} — Grafana з метриками.
+# /battery:observability
 
 {$DOMAIN} {
 	encode zstd gzip
@@ -7,7 +9,7 @@
 	handle /api/* {
 		reverse_proxy api:8080
 	}
-	# Health-и наживо з домену — фінальний гейт деплою (G8: /readyz 200).
+	# Health-и наживо з домену — по /readyz гейтиться деплой.
 	handle /livez {
 		reverse_proxy api:8080
 	}
@@ -18,11 +20,15 @@
 	handle /files/* {
 		reverse_proxy api:8080
 	}
+	# battery:web
 	handle {
 		reverse_proxy web:80
 	}
+	# /battery:web
 }
 
+# battery:observability
 {$GRAFANA_DOMAIN} {
 	reverse_proxy grafana:3000
 }
+# /battery:observability

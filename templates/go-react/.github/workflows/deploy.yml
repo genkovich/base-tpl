@@ -1,6 +1,6 @@
 # Деплой на VPS: збірка образів → GHCR → ssh compose pull/migrate/up → health-гейт.
 # Секрети: DEPLOY_HOST, DEPLOY_USER, DEPLOY_SSH_KEY. Variables: DOMAIN.
-# Репетиційний прогін за день до воркшопу гріє build-кеш (12–15 хв → 5–9 хв).
+# Перший прогін холодний (~12–15 хв); далі build-кеш скорочує до ~5–9 хв.
 name: Deploy
 
 on:
@@ -38,6 +38,7 @@ jobs:
           cache-from: type=gha,scope=api
           cache-to: type=gha,scope=api,mode=max
 
+  # battery:web
   build-web:
     name: Build Web image
     runs-on: ubuntu-latest
@@ -60,6 +61,7 @@ jobs:
             ghcr.io/${{ github.repository }}/web:${{ github.sha }}
           cache-from: type=gha,scope=web
           cache-to: type=gha,scope=web,mode=max
+  # /battery:web
 
   deploy:
     name: Deploy to VPS

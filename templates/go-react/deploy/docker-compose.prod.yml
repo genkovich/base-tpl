@@ -8,7 +8,9 @@ services:
       - "443:443"
     environment:
       DOMAIN: ${DOMAIN}
+      # battery:observability
       GRAFANA_DOMAIN: ${GRAFANA_DOMAIN}
+      # /battery:observability
     volumes:
       - ./Caddyfile:/etc/caddy/Caddyfile:ro
       - caddy-data:/data
@@ -65,10 +67,13 @@ services:
         condition: service_completed_successfully
     restart: unless-stopped
 
+  # battery:web
   web:
     image: ghcr.io/example/myapp/web:${IMAGE_TAG:-latest}
     restart: unless-stopped
+  # /battery:web
 
+  # battery:observability
   prometheus:
     image: prom/prometheus:v3.5.0
     volumes:
@@ -90,11 +95,14 @@ services:
     depends_on:
       - prometheus
     restart: unless-stopped
+  # /battery:observability
 
 volumes:
   caddy-data:
   caddy-config:
   pgdata:
+  # battery:observability
   prom-data:
   grafana-data:
+  # /battery:observability
   files:

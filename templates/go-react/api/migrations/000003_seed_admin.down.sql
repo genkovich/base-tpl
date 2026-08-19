@@ -1,1 +1,1 @@
-DELETE FROM users WHERE email = 'genkovich.beerphp@gmail.com';
+DELETE FROM users WHERE email = 'admin@example.com';
