@@ -51,7 +51,7 @@ services:
 
   # battery:observability
   prometheus:
-    image: prom/prometheus:v3.5.0
+    image: prom/prometheus:v3.14.0
     volumes:
       - ./deploy/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
     ports:
@@ -59,7 +59,7 @@ services:
     restart: unless-stopped
 
   grafana:
-    image: grafana/grafana:12.1.0
+    image: grafana/grafana:13.2.0
     environment:
       GF_AUTH_ANONYMOUS_ENABLED: "true"
       GF_AUTH_ANONYMOUS_ORG_ROLE: Viewer

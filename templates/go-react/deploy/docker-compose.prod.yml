@@ -2,7 +2,7 @@
 # Образи збирає GitHub Actions і пушить у GHCR; деплой = pull + migrate + up.
 services:
   caddy:
-    image: caddy:2.10-alpine
+    image: caddy:2.11-alpine
     ports:
       - "80:80"
       - "443:443"
@@ -75,14 +75,14 @@ services:
 
   # battery:observability
   prometheus:
-    image: prom/prometheus:v3.5.0
+    image: prom/prometheus:v3.14.0
     volumes:
       - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
       - prom-data:/prometheus
     restart: unless-stopped
 
   grafana:
-    image: grafana/grafana:12.1.0
+    image: grafana/grafana:13.2.0
     environment:
       GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD}
       GF_SERVER_ROOT_URL: https://${GRAFANA_DOMAIN}

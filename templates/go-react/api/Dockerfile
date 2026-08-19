@@ -9,7 +9,7 @@ RUN CGO_ENABLED=0 go build -o /bin/myapp-api ./cmd/api
 RUN CGO_ENABLED=0 go build -o /bin/myapp-migrate ./cmd/migrate
 
 # Stage 2: Runtime
-FROM alpine:3.23
+FROM alpine:3.24
 RUN apk add --no-cache ca-certificates \
     && adduser -D -H -s /sbin/nologin appuser
 COPY --from=builder /bin/myapp-api /bin/myapp-api
