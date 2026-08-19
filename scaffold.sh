@@ -121,7 +121,7 @@ grep -rIl -e 'myapp' -e 'MyApp' . 2>/dev/null | while read -r f; do
     -e "s|myapp|$SLUG|g" \
     -e "s|MyApp|$DISPLAY|g" "$f"
 done
-if [ -f deploy/grafana/dashboards/myapp.json ]; then
+if [ -f deploy/grafana/dashboards/myapp.json ] && [ "$SLUG" != "myapp" ]; then
   mv deploy/grafana/dashboards/myapp.json "deploy/grafana/dashboards/$SLUG.json"
 fi
 
@@ -142,9 +142,12 @@ if [ "$NO_GIT" = 1 ]; then
   echo "git init пропущено (--no-git). Заверши вручну:"
   echo "  cd $TARGET && git init -b main && git add -A && git commit -m 't0: scaffold $SLUG from base-tpl (go-react)'"
 else
+  # у середовищах без git-identity (CI) — локальний fallback, глобальний конфіг не чіпаємо
+  GIT_ID=()
+  git config --get user.email >/dev/null 2>&1 || GIT_ID=(-c user.name=scaffold -c user.email=scaffold@localhost)
   git init -b main -q
   git add -A
-  git commit -q -m "t0: scaffold $SLUG from base-tpl (go-react)"
+  git ${GIT_ID[@]+"${GIT_ID[@]}"} commit -q -m "t0: scaffold $SLUG from base-tpl (go-react)"
 fi
 
 echo ""
