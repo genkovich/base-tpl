@@ -1,4 +1,7 @@
-.PHONY: up down logs check api-check web-check
+.PHONY: up down logs check api-check
+# battery:web
+.PHONY: web-check
+# /battery:web
 
 # --- Повний локальний стек ---
 
