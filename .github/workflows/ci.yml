@@ -1,5 +1,5 @@
-# Інваріант base-tpl: темплейт go-react сам по собі зелений.
-name: template-ci
+# Матриця профілів скафолда: ловить дрейф battery-маркерів на кожен пуш.
+name: Scaffold matrix
 
 on:
   push:
@@ -10,19 +10,76 @@ permissions:
   contents: read
 
 jobs:
-  go-react-check:
+  full:
+    name: full · diff vs template + make check
     runs-on: ubuntu-latest
-    defaults: { run: { working-directory: templates/go-react } }
     steps:
-      - uses: actions/checkout@v6
-      - uses: actions/setup-go@v6
+      - uses: actions/checkout@v7
+      - uses: actions/setup-go@v7
         with:
-          go-version: "1.25"
+          go-version: "1.26"
           cache-dependency-path: templates/go-react/api/go.sum
-      - uses: actions/setup-node@v5
+      - uses: actions/setup-node@v7
         with:
-          node-version: "22"
-          cache: npm
-          cache-dependency-path: templates/go-react/web/package-lock.json
+          node-version: "24"
+      - name: Install golangci-lint
+        run: curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/HEAD/install.sh | sh -s -- -b "$(go env GOPATH)/bin"
+      - name: Scaffold full profile
+        run: ./scaffold.sh /tmp/out-full myapp example --display MyApp
+      - name: Diff against template (модуло untracked)
+        run: |
+          mkdir /tmp/tpl-ref
+          git archive HEAD:templates/go-react | tar -x -C /tmp/tpl-ref
+          diff -r /tmp/tpl-ref /tmp/out-full --exclude .git --exclude .env.docker
+      - name: Compose config valid
+        run: docker compose -f /tmp/out-full/docker-compose.yml --project-directory /tmp/out-full config -q
       - name: make check
-        run: make check
+        run: make -C /tmp/out-full check
+
+  api-only:
+    name: api-only · --no-web
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-go@v7
+        with:
+          go-version: "1.26"
+          cache-dependency-path: templates/go-react/api/go.sum
+      - name: Install golangci-lint
+        run: curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/HEAD/install.sh | sh -s -- -b "$(go env GOPATH)/bin"
+      - name: Scaffold api-only profile
+        run: ./scaffold.sh /tmp/out-api myapp example --display MyApp --no-web
+      - name: No web leftovers
+        run: |
+          test ! -d /tmp/out-api/web
+          ! grep -rn "battery:web" /tmp/out-api --include='*.yml' --include=Makefile --include='*.md'
+      - name: Compose config valid
+        run: docker compose -f /tmp/out-api/docker-compose.yml --project-directory /tmp/out-api config -q
+      - name: make api-check
+        run: make -C /tmp/out-api api-check
+
+  lean:
+    name: lean · --no-deploy --no-ci --no-observability
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-go@v7
+        with:
+          go-version: "1.26"
+          cache-dependency-path: templates/go-react/api/go.sum
+      - uses: actions/setup-node@v7
+        with:
+          node-version: "24"
+      - name: Install golangci-lint
+        run: curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/HEAD/install.sh | sh -s -- -b "$(go env GOPATH)/bin"
+      - name: Scaffold lean profile
+        run: ./scaffold.sh /tmp/out-lean myapp example --display MyApp --no-deploy --no-ci --no-observability
+      - name: No deploy/ci/observability leftovers
+        run: |
+          test ! -d /tmp/out-lean/deploy
+          test ! -d /tmp/out-lean/.github
+          ! grep -n "prometheus\|grafana" /tmp/out-lean/docker-compose.yml
+      - name: Compose config valid
+        run: docker compose -f /tmp/out-lean/docker-compose.yml --project-directory /tmp/out-lean config -q
+      - name: make check
+        run: make -C /tmp/out-lean check
