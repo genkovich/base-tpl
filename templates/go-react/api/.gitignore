@@ -16,7 +16,6 @@ coverage.html
 # Environment
 .env
 .env.local
-.env.docker
 
 # IDE
 .idea/

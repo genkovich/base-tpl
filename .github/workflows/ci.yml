@@ -30,7 +30,7 @@ jobs:
         run: |
           mkdir /tmp/tpl-ref
           git archive HEAD:templates/go-react | tar -x -C /tmp/tpl-ref
-          diff -r /tmp/tpl-ref /tmp/out-full --exclude .git --exclude .env.docker
+          diff -r /tmp/tpl-ref /tmp/out-full --exclude .git --exclude .env
       - name: Compose config valid
         run: docker compose -f /tmp/out-full/docker-compose.yml --project-directory /tmp/out-full config -q
       - name: make check

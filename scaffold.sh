@@ -126,7 +126,7 @@ if [ -f deploy/grafana/dashboards/myapp.json ] && [ "$SLUG" != "myapp" ]; then
 fi
 
 # --- Env для make up
-cp api/.env.docker.example api/.env.docker
+cp api/.env.example api/.env
 
 # --- Idea-brief від /sdlc-interview
 if [ -n "$BRIEF" ]; then
@@ -157,4 +157,4 @@ echo "Далі:"
 echo "  /init        — згенерувати кореневий CLAUDE.md (навмисно відсутній у темплейті)"
 echo "  make check   — наскрізна перевірка"
 echo "  make up      — повний локальний стек"
-echo "  Google-логін потребує реальних GOOGLE_CLIENT_ID/SECRET у api/.env.docker"
+echo "  Google-логін потребує реальних GOOGLE_CLIENT_ID/SECRET у api/.env"

@@ -3,7 +3,13 @@
 services:
   postgres:
     image: postgres:18-alpine
-    env_file: api/.env.docker
+    environment:
+      POSTGRES_USER: myapp
+      POSTGRES_PASSWORD: myapp
+      POSTGRES_DB: myapp
+      # postgres:18 changed the data layout; pin PGDATA to a subdir of the mounted volume
+      # so the image stops crash-looping on the legacy /var/lib/postgresql/data mount.
+      PGDATA: /var/lib/postgresql/data/pgdata
     ports:
       - "5432:5432"
     volumes:
@@ -17,7 +23,10 @@ services:
 
   migrate:
     build: ./api
-    env_file: api/.env.docker
+    env_file: api/.env
+    environment:
+      # у compose-мережі БД живе на хості postgres — override поверх api/.env
+      DATABASE_URL: postgres://myapp:myapp@postgres:5432/myapp?sslmode=disable
     command: ["/bin/myapp-migrate", "-direction=up"]
     depends_on:
       postgres:
@@ -26,7 +35,9 @@ services:
 
   api:
     build: ./api
-    env_file: api/.env.docker
+    env_file: api/.env
+    environment:
+      DATABASE_URL: postgres://myapp:myapp@postgres:5432/myapp?sslmode=disable
     ports:
       - "8080:8080"
     depends_on:

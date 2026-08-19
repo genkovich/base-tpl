@@ -29,7 +29,7 @@
 ## Швидкий старт
 
 ```bash
-cp api/.env.docker.example api/.env.docker   # dummy-значення; Google-логін потребує реальних CLIENT_ID/SECRET
+cp api/.env.example api/.env   # dummy-значення; Google-логін потребує реальних CLIENT_ID/SECRET
 make up                                      # повний локальний стек
 make check                                   # наскрізна перевірка
 ```
