@@ -14,6 +14,7 @@
 #   --no-deploy         без деплою (deploy-конфіги + deploy.yml)
 #   --no-ci             без CI (ci.yml)
 #   --no-observability  без Prometheus/Grafana (ендпоінт /metrics в api лишається)
+#   --display <назва>   людська назва проєкту (default: slug у Title Case)
 #   --brief <шлях>      покласти idea-brief у docs/idea-brief.md нового репо
 #   --no-git            не робити git init (надрукує команди для ручного запуску)
 #
@@ -31,13 +32,14 @@ TARGET=$1; SLUG=$2; shift 2
 OWNER="example"
 if [ $# -gt 0 ] && [ "${1#--}" = "$1" ]; then OWNER=$1; shift; fi
 
-NO_WEB=0 NO_DEPLOY=0 NO_CI=0 NO_OBS=0 BRIEF="" NO_GIT=0
+NO_WEB=0 NO_DEPLOY=0 NO_CI=0 NO_OBS=0 BRIEF="" NO_GIT=0 DISPLAY=
 while [ $# -gt 0 ]; do
   case "$1" in
     --no-web) NO_WEB=1 ;;
     --no-deploy) NO_DEPLOY=1 ;;
     --no-ci) NO_CI=1 ;;
     --no-observability) NO_OBS=1 ;;
+    --display) shift; DISPLAY=${1:?"--display потребує назву"} ;;
     --brief) shift; BRIEF=${1:?"--brief потребує шлях"} ;;
     --no-git) NO_GIT=1 ;;
     *) die "невідома опція: $1" ;;
@@ -110,7 +112,9 @@ fi
 rmdir deploy .github/workflows .github 2>/dev/null || true
 
 # --- Rename: example/myapp -> owner/slug (перший — довший патерн), myapp -> slug, MyApp -> Display
-DISPLAY=$(echo "$SLUG" | awk -F- '{ for (i=1; i<=NF; i++) $i = toupper(substr($i,1,1)) substr($i,2) } 1' OFS=' ')
+if [ -z "$DISPLAY" ]; then
+  DISPLAY=$(echo "$SLUG" | awk -F- '{ for (i=1; i<=NF; i++) $i = toupper(substr($i,1,1)) substr($i,2) } 1' OFS=' ')
+fi
 grep -rIl -e 'myapp' -e 'MyApp' . 2>/dev/null | while read -r f; do
   LC_ALL=C "${SED_I[@]}" \
     -e "s|example/myapp|$OWNER/$SLUG|g" \
