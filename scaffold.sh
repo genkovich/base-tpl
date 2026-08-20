@@ -95,7 +95,7 @@ if [ "$NO_WEB" = 1 ]; then
   CUT_SUMMARY="$CUT_SUMMARY web"
 fi
 if [ "$NO_DEPLOY" = 1 ]; then
-  rm -f .github/workflows/deploy.yml deploy/Caddyfile deploy/docker-compose.prod.yml deploy/env.prod.example
+  rm -f .github/workflows/deploy.yml .github/workflows/post-deploy-watch.yml deploy/Caddyfile deploy/docker-compose.prod.yml deploy/env.prod.example
   cut_battery deploy
   CUT_SUMMARY="$CUT_SUMMARY deploy"
 fi
