@@ -88,11 +88,22 @@ func (s *Server) setupMiddleware() {
 	}))
 	s.router.Use(securityHeaders)
 	s.router.Use(middleware.RequestID)
-	s.router.Use(middleware.RealIP)
+	// Caddy is the single trusted hop in front of the API, so the rightmost
+	// X-Forwarded-For entry is the client. Read it with middleware.GetClientIP.
+	s.router.Use(middleware.ClientIPFromXFF())
 	s.router.Use(middleware.Logger)
 	s.router.Use(middleware.Recoverer)
 	s.router.Use(middleware.Timeout(30 * time.Second))
 	s.router.Use(requestSizeLimit(1 << 20)) // 1 MB
+}
+
+// clientIPKey keys the rate limiter by the proxy-derived client IP and falls
+// back to RemoteAddr for direct (proxyless) connections, e.g. local dev.
+func clientIPKey(r *http.Request) (string, error) {
+	if ip := middleware.GetClientIP(r.Context()); ip != "" {
+		return ip, nil
+	}
+	return httprate.KeyByIP(r)
 }
 
 // securityHeaders adds standard security response headers to every response.
@@ -127,7 +138,7 @@ func (s *Server) setupRoutes() {
 
 	s.router.Group(func(r chi.Router) {
 		// General rate limit: 60 req/min per IP.
-		r.Use(httprate.LimitByIP(60, time.Minute))
+		r.Use(httprate.Limit(60, time.Minute, httprate.WithKeyFuncs(clientIPKey)))
 		r.Use(s.metrics.middleware)
 
 		r.Route("/api/v1", func(r chi.Router) {

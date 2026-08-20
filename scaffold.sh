@@ -100,7 +100,7 @@ if [ "$NO_DEPLOY" = 1 ]; then
   CUT_SUMMARY="$CUT_SUMMARY deploy"
 fi
 if [ "$NO_CI" = 1 ]; then
-  rm -f .github/workflows/ci.yml
+  rm -f .github/workflows/ci.yml .github/workflows/claude-review.yml
   cut_battery ci
   CUT_SUMMARY="$CUT_SUMMARY ci"
 fi

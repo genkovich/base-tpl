@@ -50,7 +50,7 @@ func (p *GoogleOAuthProvider) GetAuthURL(state string) string {
 		"client_id":     {p.cfg.ClientID},
 		"redirect_uri":  {p.cfg.RedirectURL},
 		"response_type": {"code"},
-		"scope":         {"openid email profile https://www.googleapis.com/auth/calendar"},
+		"scope":         {"openid email profile"},
 		"access_type":   {"offline"},
 		"prompt":        {"consent"},
 		"state":         {state},
