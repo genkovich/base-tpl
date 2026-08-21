@@ -4,7 +4,21 @@
 # /battery:observability
 
 {$DOMAIN} {
-	encode zstd gzip
+	# Стискаємо лише перелічені типи: дефолтний match encode покриває text/*,
+	# куди підпадає text/event-stream — стиснутий SSE-стрім Caddy буферизує
+	# цілком і клієнт не бачить ані байта (жоден flush_interval не рятує).
+	encode zstd gzip {
+		match {
+			header Content-Type text/html*
+			header Content-Type text/css*
+			header Content-Type text/plain*
+			header Content-Type text/javascript*
+			header Content-Type application/json*
+			header Content-Type application/javascript*
+			header Content-Type application/xml*
+			header Content-Type image/svg+xml*
+		}
+	}
 
 	handle /api/* {
 		reverse_proxy api:8080
